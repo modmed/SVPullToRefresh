@@ -280,17 +280,19 @@ static char UIScrollViewPullToRefreshView;
         NSString *subtitle = [self.subtitles objectAtIndex:self.state];
         self.subtitleLabel.text = subtitle.length > 0 ? subtitle : nil;
         
+        NSMutableParagraphStyle *titleParagraphStyle = [[NSMutableParagraphStyle alloc] init];
+        titleParagraphStyle.lineBreakMode = self.titleLabel.lineBreakMode;
         
-        CGSize titleSize = [self.titleLabel.text sizeWithFont:self.titleLabel.font
-                                            constrainedToSize:CGSizeMake(labelMaxWidth,self.titleLabel.font.lineHeight)
-                                                lineBreakMode:self.titleLabel.lineBreakMode];
+        CGRect titleRect = [self.titleLabel.text boundingRectWithSize:CGSizeMake(labelMaxWidth,self.titleLabel.font.lineHeight) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSParagraphStyleAttributeName : titleParagraphStyle.copy} context:nil];
+        CGSize titleSize = titleRect.size;
         
+        NSMutableParagraphStyle *subtitleParagraphStyle = [[NSMutableParagraphStyle alloc] init];
+        subtitleParagraphStyle.lineBreakMode = self.subtitleLabel.lineBreakMode;
         
-        CGSize subtitleSize = [self.subtitleLabel.text sizeWithFont:self.subtitleLabel.font
-                                                  constrainedToSize:CGSizeMake(labelMaxWidth,self.subtitleLabel.font.lineHeight)
-                                                      lineBreakMode:self.subtitleLabel.lineBreakMode];
+        CGRect subtitleRect = [self.subtitleLabel.text boundingRectWithSize:CGSizeMake(labelMaxWidth,self.subtitleLabel.font.lineHeight) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSParagraphStyleAttributeName : subtitleParagraphStyle.copy} context:nil];
+        CGSize subtitleSize = subtitleRect.size;
         
-        CGFloat maxLabelWidth = MAX(titleSize.width,subtitleSize.width);
+        CGFloat maxLabelWidth = MAX(titleSize.width, subtitleSize.width);
         
         CGFloat totalMaxWidth;
         if (maxLabelWidth) {
